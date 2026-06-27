@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
+    'drf_spectacular', 
 
     # Local apps
     'accounts',
@@ -97,6 +98,15 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'PadiSmart API',
+    'DESCRIPTION': 'API untuk sistem pakar diagnosis hama dan penyakit padi menggunakan metode Certainty Factor (CF) dengan integrasi chatbot AI.',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'CONTACT': {'name': 'Tim PadiSmart'},
 }
 
 # ── SimpleJWT ─────────────────────────────────────────────────────────────────
