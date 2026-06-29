@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard Admin — PadiSmart</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="../assets/css/style.css"/>
+  <style>
+    body { padding-top: 60px; }
+    .card-gradient-green  { background: linear-gradient(135deg, #059669, #34d399); }
+    .card-gradient-blue   { background: linear-gradient(135deg, #2563eb, #60a5fa); }
+    .card-gradient-purple { background: linear-gradient(135deg, #7c3aed, #a78bfa); }
+    .card-gradient-amber  { background: linear-gradient(135deg, #d97706, #fbbf24); }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 min-h-screen">
+
+  <!-- Navbar -->
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100 px-6 py-3 flex items-center justify-between shadow-sm">
+    <div class="flex items-center gap-3">
+      <span class="text-2xl">🌾</span>
+      <span class="text-xl font-bold text-emerald-600">PadiSmart</span>
+      <span class="text-gray-300 mx-1">|</span>
+      <span class="text-sm text-gray-400">Admin Panel</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <span id="navbar-user" class="text-sm text-gray-500"></span>
+      <button onclick="logout()" class="text-sm bg-red-50 text-red-500 hover:bg-red-100 px-3 py-1.5 rounded-lg transition">
+        Logout
+      </button>
+    </div>
+  </nav>
+
+  <div class="max-w-6xl mx-auto px-6 py-8">
+
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-2xl font-bold text-gray-800">Dashboard</h1>
+      <p class="text-gray-400 text-sm mt-1">Ringkasan dan statistik sistem PadiSmart</p>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div class="card-gradient-green rounded-2xl p-5 text-white shadow-lg">
+        <div class="text-3xl mb-2">🌿</div>
+        <p class="text-green-100 text-xs uppercase tracking-wide font-medium">Total Penyakit</p>
+        <p id="total-penyakit" class="text-4xl font-bold mt-1">—</p>
+      </div>
+      <div class="card-gradient-blue rounded-2xl p-5 text-white shadow-lg">
+        <div class="text-3xl mb-2">🔍</div>
+        <p class="text-blue-100 text-xs uppercase tracking-wide font-medium">Total Gejala</p>
+        <p id="total-gejala" class="text-4xl font-bold mt-1">—</p>
+      </div>
+      <div class="card-gradient-purple rounded-2xl p-5 text-white shadow-lg">
+        <div class="text-3xl mb-2">👤</div>
+        <p class="text-purple-100 text-xs uppercase tracking-wide font-medium">Total User</p>
+        <p id="total-user" class="text-4xl font-bold mt-1">—</p>
+      </div>
+      <div class="card-gradient-amber rounded-2xl p-5 text-white shadow-lg">
+        <div class="text-3xl mb-2">📋</div>
+        <p class="text-amber-100 text-xs uppercase tracking-wide font-medium">Total Diagnosis</p>
+        <p id="total-diagnosis" class="text-4xl font-bold mt-1">—</p>
+      </div>
+    </div>
+
+    <!-- Row 1: Bar Chart + Doughnut -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+
+      <!-- Bar Chart: Penyakit Sering Terdeteksi -->
+      <div class="md:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h2 class="text-base font-semibold text-gray-700">Penyakit Paling Sering Terdeteksi</h2>
+        <p class="text-gray-400 text-xs mb-5">Frekuensi kemunculan tiap penyakit dari seluruh diagnosis</p>
+        <div id="bar-loading" class="text-center text-gray-400 py-10 text-sm">Memuat data...</div>
+        <canvas id="chartBar" class="hidden"></canvas>
+      </div>
+
+      <!-- Doughnut: Distribusi CF Final -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h2 class="text-base font-semibold text-gray-700">Distribusi Keyakinan CF</h2>
+        <p class="text-gray-400 text-xs mb-5">Sebaran tingkat keyakinan hasil diagnosis</p>
+        <div id="donut-loading" class="text-center text-gray-400 py-10 text-sm">Memuat data...</div>
+        <canvas id="chartDonut" class="hidden"></canvas>
+      </div>
+
+    </div>
+
+    <!-- Row 2: Progress Bars Gejala + Progress Bars Penyakit -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      <!-- Progress Bars: Gejala Paling Sering Dipilih -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h2 class="text-base font-semibold text-gray-700">Gejala Paling Sering Dipilih</h2>
+        <p class="text-gray-400 text-xs mb-5">Top 10 gejala yang paling banyak dipilih user</p>
+        <div id="gejala-loading" class="text-center text-gray-400 py-6 text-sm">Memuat data...</div>
+        <div id="gejala-list" class="space-y-3 hidden"></div>
+      </div>
+
+      <!-- Progress Bars: Ranking Penyakit -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h2 class="text-base font-semibold text-gray-700">Ranking Deteksi Penyakit</h2>
+        <p class="text-gray-400 text-xs mb-5">Perbandingan frekuensi deteksi tiap penyakit</p>
+        <div id="ranking-loading" class="text-center text-gray-400 py-6 text-sm">Memuat data...</div>
+        <div id="ranking-list" class="space-y-3 hidden"></div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="../assets/js/api.js"></script>
+  <script>
+    const COLORS = [
+      '#059669','#2563eb','#7c3aed','#d97706','#dc2626',
+      '#0891b2','#16a34a','#ea580c','#9333ea','#ca8a04',
+      '#0284c7','#15803d','#c2410c'
+    ]
+
+    const CF_COLORS = {
+      'Rendah':       '#f87171',
+      'Sedang':       '#fbbf24',
+      'Tinggi':       '#34d399',
+      'Sangat Tinggi':'#059669'
+    }
+
+    async function loadUser() {
+      try {
+        const res  = await fetch(`${BASE_URL}/api/auth/me/`, { headers: authHeader() })
+        const user = await res.json()
+        document.getElementById('navbar-user').textContent = user.nama
+      } catch (e) {}
+    }
+
+    async function loadSummary() {
+      try {
+        const res  = await fetch(`${BASE_URL}/api/pengetahuan/statistik/summary/`)
+        const data = await res.json()
+        document.getElementById('total-penyakit').textContent  = data.total_penyakit
+        document.getElementById('total-gejala').textContent    = data.total_gejala
+        document.getElementById('total-user').textContent      = data.total_user
+        document.getElementById('total-diagnosis').textContent = data.total_diagnosis
+      } catch (e) { console.error(e) }
+    }
+
+    async function loadBarChart() {
+      try {
+        const res  = await fetch(`${BASE_URL}/api/pengetahuan/statistik/penyakit/`)
+        const data = await res.json()
+
+        document.getElementById('bar-loading').classList.add('hidden')
+        const canvas = document.getElementById('chartBar')
+        canvas.classList.remove('hidden')
+
+        if (!data.length) {
+          document.getElementById('bar-loading').textContent = 'Belum ada data.'
+          return
+        }
+
+        new Chart(canvas, {
+          type: 'bar',
+          data: {
+            labels: data.map(d => d.nama_penyakit),
+            datasets: [{
+              data: data.map(d => d.total),
+              backgroundColor: COLORS.slice(0, data.length),
+              borderRadius: 8,
+              borderSkipped: false,
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { display: false },
+              tooltip: { callbacks: { label: ctx => ` ${ctx.parsed.y}× terdeteksi` } }
+            },
+            scales: {
+              x: { ticks: { color: '#9ca3af', font: { size: 10 } }, grid: { display: false } },
+              y: { beginAtZero: true, ticks: { color: '#9ca3af', stepSize: 1 }, grid: { color: '#f3f4f6' } }
+            }
+          }
+        })
+      } catch (e) { console.error(e) }
+    }
+
+    async function loadDonutChart() {
+      try {
+        const res  = await fetch(`${BASE_URL}/api/pengetahuan/statistik/cf-distribusi/`)
+        const data = await res.json()
+
+        document.getElementById('donut-loading').classList.add('hidden')
+        const canvas = document.getElementById('chartDonut')
+        canvas.classList.remove('hidden')
+
+        new Chart(canvas, {
+          type: 'doughnut',
+          data: {
+            labels: data.map(d => d.label),
+            datasets: [{
+              data: data.map(d => d.total),
+              backgroundColor: data.map(d => CF_COLORS[d.label]),
+              borderWidth: 3,
+              borderColor: '#ffffff',
+              hoverOffset: 8
+            }]
+          },
+          options: {
+            responsive: true,
+            cutout: '65%',
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: { color: '#6b7280', font: { size: 10 }, padding: 10 }
+              },
+              tooltip: {
+                callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed} diagnosis` }
+              }
+            }
+          }
+        })
+      } catch (e) { console.error(e) }
+    }
+
+    async function loadGejalaProgress() {
+      try {
+        const res  = await fetch(`${BASE_URL}/api/pengetahuan/statistik/gejala/`)
+        const data = await res.json()
+
+        document.getElementById('gejala-loading').classList.add('hidden')
+        const list = document.getElementById('gejala-list')
+        list.classList.remove('hidden')
+
+        const max = Math.max(...data.map(d => d.total))
+        data.forEach((item, i) => {
+          const pct = Math.round((item.total / max) * 100)
+          list.innerHTML += `
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <span class="text-xs text-gray-600 truncate max-w-[75%]">${item.nama_gejala}</span>
+                <span class="text-xs font-bold" style="color:${COLORS[i % COLORS.length]}">${item.total}×</span>
+              </div>
+              <div class="w-full bg-gray-100 rounded-full h-2">
+                <div class="h-2 rounded-full" style="width:${pct}%; background:${COLORS[i % COLORS.length]}"></div>
+              </div>
+            </div>
+          `
+        })
+      } catch (e) { console.error(e) }
+    }
+
+    async function loadRankingProgress() {
+      try {
+        const res  = await fetch(`${BASE_URL}/api/pengetahuan/statistik/penyakit/`)
+        const data = await res.json()
+
+        document.getElementById('ranking-loading').classList.add('hidden')
+        const list = document.getElementById('ranking-list')
+        list.classList.remove('hidden')
+
+        const max = Math.max(...data.map(d => d.total))
+        data.forEach((item, i) => {
+          const pct = Math.round((item.total / max) * 100)
+          list.innerHTML += `
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <span class="text-xs text-gray-600 truncate max-w-[75%]">
+                  <span class="font-bold text-gray-400 mr-1">#${i + 1}</span>${item.nama_penyakit}
+                </span>
+                <span class="text-xs font-bold" style="color:${COLORS[i % COLORS.length]}">${item.total}×</span>
+              </div>
+              <div class="w-full bg-gray-100 rounded-full h-2">
+                <div class="h-2 rounded-full" style="width:${pct}%; background:${COLORS[i % COLORS.length]}"></div>
+              </div>
+            </div>
+          `
+        })
+      } catch (e) { console.error(e) }
+    }
+
+    loadUser()
+    loadSummary()
+    loadBarChart()
+    loadDonutChart()
+    loadGejalaProgress()
+    loadRankingProgress()
+  </script>
+
+</body>
+</html>

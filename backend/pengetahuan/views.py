@@ -6,6 +6,10 @@ from rest_framework.response import Response
 from .models import Penyakit, Gejala, RelasiPenyakitGejala
 from .serializers import PenyakitSerializer, GejalaSerializer, RelasiSerializer
 
+from django.db.models import Count
+from diagnosis.models import HasilDiagnosis, DetailDiagnosis
+from accounts.models import User
+
 
 # ── PENYAKIT ──────────────────────────────────────────────────────────────────
 
@@ -103,3 +107,82 @@ def relasi_list(request):
         many=True
     ).data
     return Response(data)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def statistik_penyakit(request):
+    """GET /api/pengetahuan/statistik/penyakit/ → penyakit paling sering terdeteksi"""
+    data = (
+        HasilDiagnosis.objects
+        .values('id_penyakit__nama_penyakit')
+        .annotate(total=Count('id'))
+        .order_by('-total')
+    )
+    hasil = [
+        {
+            'nama_penyakit': item['id_penyakit__nama_penyakit'],
+            'total': item['total']
+        }
+        for item in data
+    ]
+    return Response(hasil)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def statistik_summary(request):
+    """GET /api/pengetahuan/statistik/summary/"""
+    from diagnosis.models import Diagnosis
+    return Response({
+        'total_user':      User.objects.count(),
+        'total_diagnosis': Diagnosis.objects.count(),
+        'total_penyakit':  Penyakit.objects.count(),
+        'total_gejala':    Gejala.objects.count(),
+    })
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def statistik_cf_distribusi(request):
+    """
+    GET /api/pengetahuan/statistik/cf-distribusi/
+    Distribusi CF final hasil diagnosis:
+    - Rendah    : CF < 0.40
+    - Sedang    : 0.40 <= CF < 0.60
+    - Tinggi    : 0.60 <= CF < 0.80
+    - Sangat Tinggi : CF >= 0.80
+    """
+    from decimal import Decimal
+    hasil = HasilDiagnosis.objects.all()
+
+    distribusi = {'Rendah': 0, 'Sedang': 0, 'Tinggi': 0, 'Sangat Tinggi': 0}
+    for h in hasil:
+        cf = h.cf_final
+        if cf < Decimal('0.40'):
+            distribusi['Rendah'] += 1
+        elif cf < Decimal('0.60'):
+            distribusi['Sedang'] += 1
+        elif cf < Decimal('0.80'):
+            distribusi['Tinggi'] += 1
+        else:
+            distribusi['Sangat Tinggi'] += 1
+
+    return Response([
+        {'label': k, 'total': v}
+        for k, v in distribusi.items()
+    ])
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def statistik_gejala(request):
+    """GET /api/pengetahuan/statistik/gejala/ — gejala paling sering dipilih"""
+    data = (
+        DetailDiagnosis.objects
+        .values('kode_gejala__nama_gejala')
+        .annotate(total=Count('id'))
+        .order_by('-total')[:10]  # top 10
+    )
+    return Response([
+        {'nama_gejala': item['kode_gejala__nama_gejala'], 'total': item['total']}
+        for item in data
+    ])
