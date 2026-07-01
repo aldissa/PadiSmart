@@ -1,4 +1,4 @@
-const BASE_URL = 'https://padismart-production.up.railway.app/'
+const BASE_URL = 'https://padismart-production.up.railway.app'
 
 function getToken() { return localStorage.getItem('access_token') }
 function getRefreshToken() { return localStorage.getItem('refresh_token') }
