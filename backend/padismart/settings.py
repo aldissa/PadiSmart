@@ -120,3 +120,7 @@ SIMPLE_JWT = {
 
 # ── CORS (izinkan frontend lokal akses API) ────────────────────────────────────
 CORS_ALLOW_ALL_ORIGINS = True   # dev only; ganti whitelist saat production
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:5500",
+    "http://localhost:5500",
+]

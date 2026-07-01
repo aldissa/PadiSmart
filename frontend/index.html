@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PadiSmart - Sistem Pakar Hama & Penyakit Padi</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+    <!-- ============ NAVBAR ============ -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-seedling text-green-600 text-2xl"></i>
+                    <span class="text-xl font-extrabold text-gray-800">Padi<span class="text-green-600">Smart</span></span>
+                </div>
+
+                <!-- Nav Links - Desktop -->
+                <div class="hidden md:flex items-center gap-6 text-gray-600 font-medium">
+                    <a href="#" class="nav-link active-nav" data-page="dashboard">Dashboard</a>
+                    <a href="#" class="nav-link" data-page="diagnosis">Diagnosis</a>
+                    <a href="#" class="nav-link" data-page="articles">Artikel</a>
+                    <a href="#" class="nav-link" data-page="history">Riwayat</a>
+                </div>
+
+                <!-- Right side -->
+                <div class="flex items-center gap-3">
+                    <span class="text-sm text-gray-600 hidden sm:inline">Halo, <span class="font-semibold" id="userNameDisplay">Petani</span></span>
+                    <img src="https://ui-avatars.com/api/?name=Petani&background=22c55e&color=fff&size=36" alt="User" class="rounded-full w-9 h-9 border-2 border-green-400" />
+                    <button id="logoutBtn" class="text-gray-500 hover:text-red-500 transition">
+                        <i class="fas fa-sign-out-alt text-lg"></i>
+                    </button>
+                    <button id="mobileMenuBtn" class="md:hidden text-gray-600 text-xl">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-gray-100 px-4 py-3 space-y-2 text-gray-600 font-medium">
+            <a href="#" class="block py-2 active-nav" data-page="dashboard">Dashboard</a>
+            <a href="#" class="block py-2" data-page="diagnosis">Diagnosis</a>
+            <a href="#" class="block py-2" data-page="articles">Artikel</a>
+            <a href="#" class="block py-2" data-page="history">Riwayat</a>
+        </div>
+    </nav>
+
+    <!-- ============ MAIN CONTENT ============ -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Pages will be loaded here dynamically -->
+        <div id="pageContainer"></div>
+    </main>
+
+    <!-- ============ AUTH MODAL ============ -->
+    <div id="authModal" class="fixed inset-0 bg-black/50 modal-backdrop flex items-center justify-center z-50 p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h2 id="authTitle" class="text-2xl font-bold text-gray-800">Login</h2>
+                <button id="closeAuthBtn" class="text-gray-400 hover:text-gray-600 text-xl">&times;</button>
+            </div>
+            <form id="authForm">
+                <div id="nameField" class="hidden mb-3">
+                    <label class="block text-sm font-medium text-gray-700">Nama Lengkap</label>
+                    <input type="text" id="authName" placeholder="Masukkan nama" class="w-full border border-gray-200 rounded-lg px-4 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-green-400" />
+                </div>
+                <div class="mb-3">
+                    <label class="block text-sm font-medium text-gray-700">Email</label>
+                    <input type="email" id="authEmail" placeholder="Masukkan email" class="w-full border border-gray-200 rounded-lg px-4 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-green-400" />
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700">Password</label>
+                    <input type="password" id="authPassword" placeholder="Masukkan password" class="w-full border border-gray-200 rounded-lg px-4 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-green-400" />
+                </div>
+                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-lg transition">Login</button>
+            </form>
+            <p class="text-center text-sm text-gray-500 mt-4">
+                <span id="authToggleText">Belum punya akun?</span>
+                <button id="authToggleBtn" class="text-green-600 font-semibold hover:underline">Daftar</button>
+            </p>
+        </div>
+    </div>
+
+    <!-- ============ JAVASCRIPT ============ -->
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/diagnosis.js"></script>
+    <script src="js/articles.js"></script>
+    <script src="js/history.js"></script>
+    <script src="js/chat.js"></script>
+    <script src="js/app.js"></script>
+
+</body>
+</html>

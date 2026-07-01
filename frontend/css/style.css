@@ -1,0 +1,97 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+* {
+    font-family: 'Inter', sans-serif;
+}
+
+/* ===== GRADIENT ===== */
+.gradient-bg {
+    background: linear-gradient(135deg, #0f3b2c 0%, #1a5c3a 50%, #2d8f5a 100%);
+}
+
+/* ===== CARD HOVER ===== */
+.card-hover {
+    transition: all 0.3s ease;
+}
+.card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+/* ===== NAV LINK ===== */
+.nav-link {
+    position: relative;
+    transition: color 0.3s;
+    cursor: pointer;
+}
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #4ade80;
+    transition: width 0.3s;
+}
+.nav-link:hover::after {
+    width: 100%;
+}
+.active-nav::after {
+    width: 100% !important;
+}
+.active-nav {
+    color: #16a34a !important;
+}
+
+/* ===== SYMPTOM CHECKBOX ===== */
+.symptom-checkbox {
+    accent-color: #22c55e;
+    width: 20px;
+    height: 20px;
+}
+
+/* ===== CHAT BUBBLE ===== */
+.chat-bubble {
+    animation: fadeInUp 0.3s ease;
+}
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== RESULT CARD ===== */
+.result-card {
+    border-left: 4px solid #22c55e;
+}
+
+/* ===== MODAL BACKDROP ===== */
+.modal-backdrop {
+    backdrop-filter: blur(8px);
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar {
+    width: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+    background: #22c55e;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #16a34a;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+    .sidebar.open {
+        transform: translateX(0);
+    }
+}
