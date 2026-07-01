@@ -1,3 +1,5 @@
+import os
+
 from pathlib import Path
 from decouple import config
 from datetime import timedelta
@@ -6,9 +8,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-^i&4cd20cqr4=_y!8fjy)t_8pvs3wmu_1rwpo17y7zj*#(j1n+')
 
-DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = config(
+    'ALLOWED_HOSTS',
+    default='127.0.0.1,localhost'
+).split(',')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -89,6 +94,7 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # ── Django REST Framework ──────────────────────────────────────────────────────
 REST_FRAMEWORK = {
@@ -118,9 +124,8 @@ SIMPLE_JWT = {
     'USER_ID_CLAIM': 'user_id',       # ← tambahkan ini
 }
 
-# ── CORS (izinkan frontend lokal akses API) ────────────────────────────────────
-CORS_ALLOW_ALL_ORIGINS = True   # dev only; ganti whitelist saat production
-CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:5500",
-    "http://localhost:5500",
-]
+# ── CORS (izinkan frontend lokal akses API) ────────────────────────────────
+CORS_ALLOWED_ORIGINS = config(
+    'CORS_ALLOWED_ORIGINS',
+    default='http://127.0.0.1:5500,http://localhost:5500'
+).split(',')
