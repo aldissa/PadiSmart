@@ -48,8 +48,12 @@ def generate_jawaban(pertanyaan: str, diagnosis) -> str:
                 "input_value": input_lengkap,
                 "session_id":  str(uuid.uuid4()),
             },
-            headers={"x-api-key": config('LANGFLOW_API_KEY')},
+            headers={
+                "x-api-key": config('LANGFLOW_API_KEY'),
+                "ngrok-skip-browser-warning": "true"   # ← tambahkan baris ini
+            },
             timeout=60,
+            
         )
         response.raise_for_status()
         data = response.json()
